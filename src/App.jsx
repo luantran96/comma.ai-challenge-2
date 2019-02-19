@@ -139,8 +139,6 @@ class App extends React.Component {
   }
 
   render() {
-    //cs
-    //cp
     const { map, days } = this.state;
     this.drawPoints();
     return (
