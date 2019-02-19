@@ -7,19 +7,32 @@ const app = express();
 
 app.use(express.static(path.join(__dirname, '../dist/')));
 
-fs.readdir('./trips', (err, files) => {
-  if (err) {
-    throw err;
-  }
 
-  files.forEach(file => {
-    console.log(file);
+
+app.get('/data/getNames', (req, res) => {
+  fs.readdir('./trips', (err, files) => {
+    if (err) throw err;
+
+    res.send(files);
   });
+  //   files.forEach(file => {
+  //     const src = fs.createReadStream(path.join(__dirname, '../trips', file));
+  //     src.pipe(res);
+  // })});
+  
+});
+
+app.get('/data/:fileName', (req, res) => {
+      const {fileName} = req.params;
+      const src = fs.createReadStream(path.join(__dirname, '../trips', fileName));
+      src.pipe(res);
 });
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../dist/app.html'));
 });
+
+
 
 app.listen(PORT, () => {
   console.log(`listening on port ${PORT}!`);
