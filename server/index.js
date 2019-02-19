@@ -1,10 +1,12 @@
 const express = require('express');
-const cors = require('cors');
 const path = require('path');
+const compression = require('compression');
 const PORT = process.env.PORT || 4000;
 const fs = require('fs');
 const app = express();
 
+
+app.use(compression());
 app.use(express.static(path.join(__dirname, '../dist/')));
 
 
