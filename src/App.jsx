@@ -15,7 +15,6 @@ class App extends React.Component {
     };
 
     this.drawPoints = this.drawPoints.bind(this);
-    this.updateMarker = this.updateMarker.bind(this);
   }
 
   componentDidMount() {
@@ -32,18 +31,22 @@ class App extends React.Component {
       zoom: 8
     });
 
+    // Get the names of all the files
     fetch("http://127.0.0.1:4000/data/getNames")
       .then(res => res.json())
       .then(data => {
         let days = {};
         let numDays = data.length;
 
+        // For each file
         data.forEach((file, idx) => {
+          // Send a request to server to fetch JSON data
           fetch(`http://127.0.0.1:4000/data/${file}`)
             .then(res => res.json())
             .then(data => {
               days[file] = data;
               if (idx === numDays - 1) {
+                // Stop fetching when reaches last file
                 this.setState({
                   directionsService,
                   directionsDisplay,
@@ -56,15 +59,10 @@ class App extends React.Component {
       });
   }
 
-  updateMarker(day) {
-    const { days, markers } = this.state;
-    console.log(markers[days[day].index]);
-  }
-
   drawPoints() {
     let { days, map} = this.state;
-    let markers = [];
 
+    /* Draw markers onto Google Maps */
     Object.entries(days).forEach(pair => {
       let curDayPath = [];
       let dayName = pair[0];
@@ -90,13 +88,13 @@ class App extends React.Component {
         map
       });
 
-      markers.push(startMarker, endMarker);
-
       // Add all coordinates of current day to an array
       let speedInOneMinute = 0;
       let idx = 0;
 
+      // Add up all the locations during one minute
       value.coords.forEach(location => {
+        // Add up all the speeds during one minute
         speedInOneMinute += location.speed;
         idx += 1;
         curDayPath.push({
@@ -110,6 +108,7 @@ class App extends React.Component {
 
           let strokeColor;
 
+          // Change the line color depending on speed
           if (averageSpeed < 11.176) {
             strokeColor = "#da28f1";
           } else if (averageSpeed >= 11.176) {
@@ -120,8 +119,7 @@ class App extends React.Component {
             strokeColor = "#d10404";
           }
 
-          //console.log('strokeColor: ', strokeColor);
-
+          // Draw line on Google Maps
           let dayPath = new google.maps.Polyline({
             path: curDayPath,
             geodesic: true,
@@ -135,18 +133,8 @@ class App extends React.Component {
           idx = 0;
           curDayPath = [];
         }
-      });
 
-      // Draw points on Map
-      let dayPath = new google.maps.Polyline({
-        path: curDayPath,
-        geodesic: true,
-        strokeColor: "#FF0000",
-        strokeOpacity: 1.0,
-        strokeWeight: 2
       });
-
-      dayPath.setMap(map);
     });
   }
 
@@ -157,7 +145,7 @@ class App extends React.Component {
     this.drawPoints();
     return (
       <div id="app">
-        <TripInfo updateMarker={this.updateMarker} />
+        <TripInfo />
         <div id="map" />
       </div>
     );

@@ -20,20 +20,18 @@ export default class TripInfo extends Component {
   }
 
   componentDidMount() {
+    // fetch file names from server
     fetch("http://127.0.0.1:4000/data/getNames")
       .then(res => res.json())
       .then(data => {
         this.setState({
           fileNames: data,
-          map
         });
       });
   }
 
   handleChange({ target }) {
-
-    this.props.updateMarker(target.value);
-    
+    // fetch day data from server
     fetch(`http://127.0.0.1:4000/data/${target.value}`)
       .then(res => res.json())
       .then(data => {
@@ -43,6 +41,7 @@ export default class TripInfo extends Component {
         let endTime = data.end_time;
         let averageSpeedsPerMinute = [];
 
+        // Calculate average one minute speed for whole trip duration
         data.coords.forEach(location => {
           speedInOneMinute += location.speed;
           idx += 1;
@@ -66,7 +65,7 @@ export default class TripInfo extends Component {
   }
 
   renderContent() {
-    let { render, select, averageSpeed, startTime, endTime } = this.state;
+    let { render, averageSpeed, startTime, endTime } = this.state;
 
     if (render) {
       return (
