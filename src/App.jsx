@@ -3,10 +3,9 @@ import Map from './Map';
 import TripInfo from './TripInfo';
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
   }
-
 
   render() {
     return (
